@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -119,8 +120,11 @@ int main()
                 system("clear");
             #endif
         }
-        else
+        else if(p==0)
         {
+        	remove("Pass.txt");      	
+        	ofstream my_file("Pass.txt");
+        	my_file<<pass;
             break;
         }
     } while (i < 2);
