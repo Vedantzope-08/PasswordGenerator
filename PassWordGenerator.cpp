@@ -1,134 +1,133 @@
 #include <iostream>
-#include <vector>
 #include <string>
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
+#include <cctype>
+#include <fstream>  
 
-using namespace std;
+using namespace std; 
 
-string randchar()
-{
-    vector<string> words;
-    for (int i = 33; i <= 64; i++)
-    {
-        char c = i;
-        string a;
-        a += c;
-        words.push_back(a);
+
+string shuffleString(const string& input) {
+    string shuffled = input;
+    int n = shuffled.length();
+
+    for (int i = 0; i < n; ++i) {
+        int randomIndex = rand() % n;  // Generate a random index
+        swap(shuffled[i], shuffled[randomIndex]);  // Swap characters
     }
 
-    int index = rand() % 32;
-
-    return words[index];
+    return shuffled;
 }
 
-string generateRandomString()
-{
-    const int length = 10;
-    const string alphabet = "abcdefghijklmnopqrstuvwxyz";
-    string randomString;
 
-    for (int i = 0; i < length; ++i)
-    {
-        int index = rand() % alphabet.length();
-        randomString += alphabet[index];
+void ensureLength(string& str) {
+    const string symbols = "@#$%^&*!";
+    while (str.length() < 8) {
+        char randomSymbol = symbols[rand() % symbols.length()];
+        int randomPosition = 1 + rand() % (str.length() - 1);  // Random position excluding front and end
+        str.insert(str.begin() + randomPosition, randomSymbol);
     }
-
-    return randomString;
 }
 
-int main()
-{
-    srand(time(0)); 
+void ensureCapitalLetter(string& str) {
+    bool hasCapital = false;
 
-    string fname, lname, dd, mm, yy;
-
-    cout << "Enter your First name: ";
-    cin >> fname;
-
-    cout << "Enter your Last name: ";
-    cin >> lname;
-
-    cout << "Enter your Birthdate: ";
-    cin >> dd;
-
-    cout << "Enter your Birthmonth: ";
-    cin >> mm;
-
-    cout << "Enter your Birthyear: ";
-    cin >> yy;
-
-    int i = 1;
-    do
-    {
-        string randchar_str = randchar();
-        string randomStr = generateRandomString();
-
-        string pass;
-        int n = rand() % 11 + 1;
-
-        switch (n)
-        {
-        case 1:
-            pass = fname + lname + randchar_str + yy;
-            break;
-        case 2:
-            pass = fname + lname + randchar_str + dd + mm;
-            break;
-        case 3:
-            pass = lname + fname + randchar_str + yy;
-            break;
-        case 4:
-            pass = fname + lname + randchar_str + dd + mm;
-            break;
-        case 5:
-            pass = fname + lname + randchar_str + dd + yy;
-            break;
-        case 6:
-            pass = fname + randchar_str + lname + yy;
-            break;
-        case 7:
-            pass = fname + lname + randchar_str + mm + yy;
-            break;
-        case 8:
-            pass = lname + randchar_str + fname + yy;
-            break;
-        case 9:
-            pass = randomStr + randchar_str + yy;
-            break;
-        case 10:
-            pass = randomStr + randchar_str + dd + mm;
-            break;
-        case 11:
-            pass = randomStr + randchar_str + mm + dd;
+    
+    for (char ch : str) {
+        if (isupper(ch)) {
+            hasCapital = true;
             break;
         }
+    }
 
-        cout << "Generated Password: " << pass << endl << endl;
+    // If no capital letter, add one at a random position (excluding front and end)
+    if (!hasCapital) {
+        char capitalLetter = 'A' + rand() % 26;  // Random capital letter
+        int randomPosition = 1 + rand() % (str.length() - 1);
+        str.insert(str.begin() + randomPosition, capitalLetter);
+    }
+}
 
-        int p;
-        cout << "To generate another password, enter 1. To exit, enter 0: ";
+void ensureSymbol(string& str) {
+    const string symbols = "@#$%^&*!";
+    bool hasSymbol = false;
+
+    for (char ch : str) {
+        if (symbols.find(ch) != string::npos) {
+            hasSymbol = true;
+            break;
+        }
+    }
+
+    if (!hasSymbol) {
+        char randomSymbol = symbols[rand() % symbols.length()];
+        int randomPosition = 1 + rand() % (str.length() - 1);
+        str.insert(str.begin() + randomPosition, randomSymbol);
+    }
+}
+
+int main() {
+    
+    srand(0);
+
+   
+    string firstname, lastname, birthyear;
+    cout << "Enter your first name: ";
+    cin >> firstname;
+    cout << "Enter your last name: ";
+    cin >> lastname;
+    cout << "Enter your birth year: ";
+    cin >> birthyear;
+
+  
+    string combined = firstname + lastname + birthyear;
+
+    int p;  
+    while (true) {
+        
+        string password = shuffleString(combined);
+
+       
+        ensureLength(password);
+
+        
+        ensureCapitalLetter(password);
+
+        
+        ensureSymbol(password);
+
+        
+        cout << "Your generated password is: " << password << endl;
+
+        
+        cout << "Press 1 to regenerate, or 0 to save and exit: ";
         cin >> p;
 
-        if (p == 1)
-        {
-            // Clear screen (platform dependent)
+        if (p == 1) {
+           
             #ifdef _WIN32
                 system("cls");
             #else
                 system("clear");
             #endif
-        }
-        else if(p==0)
-        {
-        	remove("Pass.txt");      	
-        	ofstream my_file("Pass.txt");
-        	my_file<<pass;
+        } else if (p == 0) {
+            
+            remove("Pass.txt");  // Remove old file if it exists
+            ofstream my_file("Pass.txt");
+            my_file << password;  
+            my_file.close();
+            cout << "Password saved\n";
             break;
         }
-    } while (i < 2);
 
+        if (p != 1 && p != 0) {
+            cout << "Invalid input! Exiting program." << endl;
+            break;
+        }
+    }
+
+    cout << "Thank you for using the password generator!" << endl;
     return 0;
 }
 
