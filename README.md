@@ -18,13 +18,13 @@ fstream<br>
       ensureLength<br>
       Ensures the password is at least 8 characters long by adding random special symbols if necessary.<br>
       
-  <h3>ensureCapitalLetter</h3>h3><br>
+  <h3>ensureCapitalLetter</h3><br>
       Checks if the password contains at least one capital letter and inserts one if missing.<br>
       
-  <h3>ensureSymbol</h3>h3><br>
+  <h3>ensureSymbol</h3><br>
       Ensures the presence of at least one special symbol in the password, adding one if absent.<br>
 
-  <h3>main</h3>h3><br>
+  <h3>main</h3><br>
       Handles user input, generates passwords, integrates MySQL for saving passwords, and provides an option for regeneration or saving the password.<br>
 
 Link for Reference<br>
