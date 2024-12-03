@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <cctype>
-#include <fstream>
 
 using namespace std;
 
@@ -15,8 +14,8 @@ string shuffleString(const string& input) {
     int n = shuffled.length();
 
     for (int i = 0; i < n; ++i) {
-        int randomIndex = rand() % n;  // Generate a random index
-        swap(shuffled[i], shuffled[randomIndex]);  // Swap characters
+        int randomIndex = rand() % n;  
+        swap(shuffled[i], shuffled[randomIndex]);  
     }
 
     return shuffled;
@@ -43,9 +42,9 @@ void ensureCapitalLetter(string& str) {
         }
     }
 
-    // If no capital letter, add one at a random position (excluding front and end)
+  
     if (!hasCapital) {
-        char capitalLetter = 'A' + rand() % 26;  // Random capital letter
+        char capitalLetter = 'A' + rand() % 26;  
         int randomPosition = 1 + rand() % (str.length() - 1);
         str.insert(str.begin() + randomPosition, capitalLetter);
     }
@@ -96,16 +95,12 @@ int main() {
     while (true) {
 
         string password = shuffleString(combined);
-
-
+        
         ensureLength(password);
-
 
         ensureCapitalLetter(password);
 
-
         ensureSymbol(password);
-
 
         cout << "Your generated password is: " << password << endl;
 
