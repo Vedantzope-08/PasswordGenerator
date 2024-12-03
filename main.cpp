@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cctype>
+#include <fstream>
 
 using namespace std;
 
@@ -14,8 +15,8 @@ string shuffleString(const string& input) {
     int n = shuffled.length();
 
     for (int i = 0; i < n; ++i) {
-        int randomIndex = rand() % n;  
-        swap(shuffled[i], shuffled[randomIndex]);  
+        int randomIndex = rand() % n;  // Generate a random index
+        swap(shuffled[i], shuffled[randomIndex]);  // Swap characters
     }
 
     return shuffled;
@@ -42,9 +43,9 @@ void ensureCapitalLetter(string& str) {
         }
     }
 
-  
+    // If no capital letter, add one at a random position (excluding front and end)
     if (!hasCapital) {
-        char capitalLetter = 'A' + rand() % 26;  
+        char capitalLetter = 'A' + rand() % 26;  // Random capital letter
         int randomPosition = 1 + rand() % (str.length() - 1);
         str.insert(str.begin() + randomPosition, capitalLetter);
     }
@@ -95,12 +96,16 @@ int main() {
     while (true) {
 
         string password = shuffleString(combined);
-        
+
+
         ensureLength(password);
+
 
         ensureCapitalLetter(password);
 
+
         ensureSymbol(password);
+
 
         cout << "Your generated password is: " << password << endl;
 
@@ -118,19 +123,45 @@ int main() {
         } else if (p == 0) {
 
 
+ ss << "SELECT 1 FROM data WHERE FName = '" << firstName << "' AND LName = '" << lastName << "'";
+    string checkQuery = ss.str();
+    const char* checkQ = checkQuery.c_str();
+    qstate = mysql_query(conn, checkQ);
 
-            ss <<"INSERT INTO data (FName, LName,  Pass) VALUES ('"<< firstName<< "', '"<< lastName<< "','"<< password<< "' )";
+    if (qstate == 0) {
+        MYSQL_RES* res = mysql_store_result(conn);
+        if (mysql_num_rows(res) > 0) {
 
-            string query = ss.str();
-            const char* q= query.c_str();
-            qstate = mysql_query(conn, q);
-            if(qstate==0){
-                cout<<" Password Was Saved!"<<endl;
+            ss.str("");
+            ss << "UPDATE data SET Pass = '" << password << "' WHERE FName = '" << firstName << "' AND LName = '" << lastName << "'";
+            string updateQuery = ss.str();
+            const char* updateQ = updateQuery.c_str();
+            qstate = mysql_query(conn, updateQ);
 
-            }else{
-                cout<<"Failed to Save Password!!"<<endl;
+            if (qstate == 0) {
+                cout << "Password updated successfully!" << endl;
+            } else {
+                cout << "Failed to update password!" << endl;
             }
-            break;
+        } else {
+
+            ss.str("");
+            ss << "INSERT INTO data (FName, LName, Pass) VALUES ('" << firstName << "', '" << lastName << "', '" << password << "')";
+            string insertQuery = ss.str();
+            const char* insertQ = insertQuery.c_str();
+            qstate = mysql_query(conn, insertQ);
+
+            if (qstate == 0) {
+                cout << "Password was saved!" << endl;
+            } else {
+                cout << "Failed to save password!" << endl;
+            }
+        }
+        mysql_free_result(res);
+    } else {
+        cout << "Error checking for existing record!" << endl;
+    }
+    break;
         }
 
         if (p != 1 && p != 0) {
